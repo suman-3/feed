@@ -1,10 +1,14 @@
 import { Icons } from "@/components/icons";
 import { MaxWidthWrapper } from "@/components/max-width-wrapper";
 import { TopicCreator } from "@/components/topic-creator";
+import { redis } from "@/lib/redis";
 import { Star } from "lucide-react";
 import Image from "next/image";
 
-export default function Home() {
+export default async function Home() {
+  const servedRequest = await redis.get("served-request");
+  
+
   return (
     <section className="min-h-screen bg-grid-zinc-50">
       <MaxWidthWrapper className="relative pb-24 pt-10 sm:pb-32 lg:pt-24 xl:pt-32 lg:pb-52">
@@ -44,7 +48,10 @@ export default function Home() {
                 </div>
 
                 <p>
-                  <span className="font-semibold">10</span> served request
+                  <span className="font-semibold">
+                    {Math.ceil(Number(servedRequest) / 10) * 10}
+                  </span>{" "}
+                  served request
                 </p>
               </div>
             </div>
