@@ -1,7 +1,7 @@
 "use client";
 
 import { MaxWidthWrapper } from "@/components/max-width-wrapper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Wordcloud } from "@visx/wordcloud";
 import { scaleLog } from "@visx/scale";
 import { Text } from "@visx/text";
@@ -11,6 +11,9 @@ import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { submitComment } from "../action";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {io} from 'socket.io-client'
+
+const socket = io("http://localhost:8080")
 
 interface ClientPageProps {
   topicName: string;
@@ -20,6 +23,11 @@ interface ClientPageProps {
 const ClientPage = ({ topicName, initialData }: ClientPageProps) => {
   const [words, setWords] = useState(initialData);
   const [input, setInput] = useState<string>("");
+
+
+  useEffect(()=>{
+    socket.emit("join-room", `room:${topicName}`)
+  },[])
 
   const fontScale = scaleLog({
     domain: [
