@@ -20,48 +20,49 @@ interface ClientPageProps {
   initialData: { text: string; value: number }[];
 }
 
+const COLORS = ["#143059", "#2F6B9A", "#82a6c2"]
 const ClientPage = ({ topicName, initialData }: ClientPageProps) => {
-  const [words, setWords] = useState(initialData);
-  const [input, setInput] = useState<string>("");
+  const [words, setWords] = useState(initialData)
+  const [input, setInput] = useState<string>("")
 
   useEffect(() => {
-    socket.emit("join-room", `room:${topicName}`);
-  }, []);
+    socket.emit("join-room", `room:${topicName}`)
+  }, [])
 
   useEffect(() => {
     socket.on("room-update", (message: string) => {
       const data = JSON.parse(message) as {
-        text: string;
-        value: number;
-      }[];
+        text: string
+        value: number
+      }[]
 
       data.map((newWord) => {
         const isWordAlreadyIncluded = words.some(
           (word) => word.text === newWord.text
-        );
+        )
 
         if (isWordAlreadyIncluded) {
           // increment
           setWords((prev) => {
-            const before = prev.find((word) => word.text === newWord.text);
-            const rest = prev.filter((word) => word.text !== newWord.text);
+            const before = prev.find((word) => word.text === newWord.text)
+            const rest = prev.filter((word) => word.text !== newWord.text)
 
             return [
               ...rest,
               { text: before!.text, value: before!.value + newWord.value },
-            ];
-          });
+            ]
+          })
         } else if (words.length < 50) {
           // add to state
-          setWords((prev) => [...prev, newWord]);
+          setWords((prev) => [...prev, newWord])
         }
-      });
-    });
+      })
+    })
 
     return () => {
-      socket.off("room-update");
-    };
-  }, [words]);
+      socket.off("room-update")
+    }
+  }, [words])
 
   const fontScale = scaleLog({
     domain: [
@@ -69,13 +70,11 @@ const ClientPage = ({ topicName, initialData }: ClientPageProps) => {
       Math.max(...words.map((w) => w.value)),
     ],
     range: [10, 100],
-  });
-
-  const COLORS = ["#143059", "#2F6B9A", "#82a6c2"];
+  })
 
   const { mutate, isPending } = useMutation({
     mutationFn: submitComment,
-  });
+  })
 
   return (
     <div className="w-full flex flex-col items-center justify-center min-h-screen bg-grid-zinc-50 pb-10">
