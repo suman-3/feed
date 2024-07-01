@@ -1,0 +1,6 @@
+{
+	"dependencies": {
+		"@visx/text": "^3.3.0",
+		"@visx/wordcloud": "^3.3.0"
+	}
+}
